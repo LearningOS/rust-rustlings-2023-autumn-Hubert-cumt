@@ -8,13 +8,16 @@
 // Execute `rustlings hint threads1` or use the `hint` watch subcommand for a
 // hint.
 
-// I AM NOT DONE
-
 use std::thread;
 use std::time::{Duration, Instant};
 
+use std::sync::Arc;
+use std::sync::Barrier;
+
 fn main() {
     let mut handles = vec![];
+    let barrier = Arc::new(Barrier::new(1));
+
     for i in 0..10 {
         handles.push(thread::spawn(move || {
             let start = Instant::now();
@@ -27,7 +30,10 @@ fn main() {
     let mut results: Vec<u128> = vec![];
     for handle in handles {
         // TODO: a struct is returned from thread::spawn, can you use it?
+        results.push(handle.join().unwrap()); 
     }
+
+    barrier.wait();
 
     if results.len() != 10 {
         panic!("Oh no! All the spawned threads did not finish!");
